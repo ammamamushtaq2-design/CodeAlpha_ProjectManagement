@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — ProjectFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>My Profile</h1>
+</div>
+<div class="profile-layout">
+    <div class="profile-card">
+        {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" class="profile-avatar">
+        {% else %}
+        <div class="avatar-placeholder">{{ user.username|first|upper }}</div>
+        {% endif %}
+        <h2>{{ user.username }}</h2>
+        <p class="job-title">{{ profile.job_title|default:"No job title set" }}</p>
+        <p class="bio">{{ profile.bio|default:"No bio yet" }}</p>
+    </div>
+    <div class="profile-form-card">
+        <h2>Edit Profile</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" name="job_title" value="{{ profile.job_title }}" placeholder="e.g. Frontend Developer">
+            </div>
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea name="bio" rows="3" placeholder="Tell your team about yourself">{{ profile.bio }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Profile Picture</label>
+                <input type="file" name="avatar" accept="image/*">
+            </div>
+            <button type="submit" class="btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

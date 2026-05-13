@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}{{ project.title }} — ProjectFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ project.title }}</h1>
+    <a href="{% url 'create_task' project.pk %}" class="btn-primary">+ Add Task</a>
+</div>
+<p class="project-desc">{{ project.description }}</p>
+<div class="progress-section">
+    <span>Progress: {{ progress }}%</span>
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ progress }}%"></div>
+    </div>
+</div>
+<div class="kanban-board">
+    <div class="kanban-column">
+        <div class="column-header todo">
+            <h3>To Do</h3>
+            <span class="task-count">{{ todo_tasks.count }}</span>
+        </div>
+        {% for task in todo_tasks %}
+        <div class="task-card priority-{{ task.priority }}">
+            <a href="{% url 'task_detail' task.pk %}"><h4>{{ task.title }}</h4></a>
+            <div class="task-meta">
+                <span class="priority-badge">{{ task.priority }}</span>
+                {% if task.assigned_to %}
+                <span class="assignee">{{ task.assigned_to.username }}</span>
+                {% endif %}
+            </div>
+            {% if task.due_date %}
+            <span class="due-date">Due: {{ task.due_date }}</span>
+            {% endif %}
+            <form method="post" action="{% url 'update_task_status' task.pk %}">
+                {% csrf_token %}
+                <select name="status" onchange="this.form.submit()">
+                    <option value="todo" selected>To Do</option>
+                    <option value="inprogress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+            </form>
+        </div>
+        {% empty %}
+        <p class="empty-col">No tasks here</p>
+        {% endfor %}
+    </div>
+    <div class="kanban-column">
+        <div class="column-header inprogress">
+            <h3>In Progress</h3>
+            <span class="task-count">{{ inprogress_tasks.count }}</span>
+        </div>
+        {% for task in inprogress_tasks %}
+        <div class="task-card priority-{{ task.priority }}">
+            <a href="{% url 'task_detail' task.pk %}"><h4>{{ task.title }}</h4></a>
+            <div class="task-meta">
+                <span class="priority-badge">{{ task.priority }}</span>
+                {% if task.assigned_to %}
+                <span class="assignee">{{ task.assigned_to.username }}</span>
+                {% endif %}
+            </div>
+            {% if task.due_date %}
+            <span class="due-date">Due: {{ task.due_date }}</span>
+            {% endif %}
+            <form method="post" action="{% url 'update_task_status' task.pk %}">
+                {% csrf_token %}
+                <select name="status" onchange="this.form.submit()">
+                    <option value="todo">To Do</option>
+                    <option value="inprogress" selected>In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+            </form>
+        </div>
+        {% empty %}
+        <p class="empty-col">No tasks here</p>
+        {% endfor %}
+    </div>
+    <div class="kanban-column">
+        <div class="column-header done">
+            <h3>Done</h3>
+            <span class="task-count">{{ done_tasks.count }}</span>
+        </div>
+        {% for task in done_tasks %}
+        <div class="task-card priority-{{ task.priority }}">
+            <a href="{% url 'task_detail' task.pk %}"><h4>{{ task.title }}</h4></a>
+            <div class="task-meta">
+                <span class="priority-badge">{{ task.priority }}</span>
+                {% if task.assigned_to %}
+                <span class="assignee">{{ task.assigned_to.username }}</span>
+                {% endif %}
+            </div>
+            <form method="post" action="{% url 'update_task_status' task.pk %}">
+                {% csrf_token %}
+                <select name="status" onchange="this.form.submit()">
+                    <option value="todo">To Do</option>
+                    <option value="inprogress">In Progress</option>
+                    <option value="done" selected>Done</option>
+                </select>
+            </form>
+        </div>
+        {% empty %}
+        <p class="empty-col">No tasks here</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

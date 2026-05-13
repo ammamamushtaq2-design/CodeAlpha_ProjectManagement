@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}{{ task.title }} — ProjectFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ task.title }}</h1>
+    <a href="{% url 'project_detail' task.project.pk %}" class="btn-cancel">Back to Board</a>
+</div>
+<div class="task-detail-layout">
+    <div class="task-detail-main">
+        <div class="task-detail-card">
+            <p>{{ task.description|default:"No description provided." }}</p>
+        </div>
+        <div class="comments-section">
+            <h3>Comments</h3>
+            {% for comment in comments %}
+            <div class="comment-card">
+                <div class="comment-header">
+                    <strong>{{ comment.author.username }}</strong>
+                    <span>{{ comment.created_at|timesince }} ago</span>
+                </div>
+                <p>{{ comment.content }}</p>
+            </div>
+            {% empty %}
+            <p class="no-comments">No comments yet. Be the first!</p>
+            {% endfor %}
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                <textarea name="content" rows="3" placeholder="Write a comment..." required></textarea>
+                <button type="submit" class="btn-primary">Post Comment</button>
+            </form>
+        </div>
+    </div>
+    <div class="task-detail-sidebar">
+        <div class="sidebar-card">
+            <h3>Details</h3>
+            <div class="detail-item">
+                <label>Status</label>
+                <span class="status-badge status-{{ task.status }}">{{ task.get_status_display }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Priority</label>
+                <span class="priority-badge priority-{{ task.priority }}">{{ task.priority }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Assigned To</label>
+                <span>{{ task.assigned_to.username|default:"Unassigned" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Due Date</label>
+                <span>{{ task.due_date|default:"No due date" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Project</label>
+                <a href="{% url 'project_detail' task.project.pk %}">{{ task.project.title }}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

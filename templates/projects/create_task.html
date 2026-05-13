@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}New Task — ProjectFlow{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Add Task to {{ project.title }}</h1>
+</div>
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Task Title</label>
+            <input type="text" name="title" placeholder="e.g. Design homepage" required>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="3" placeholder="Task details..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Priority</label>
+            <select name="priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" name="due_date">
+        </div>
+        <div class="form-group">
+            <label>Assign To</label>
+            <select name="assigned_to">
+                <option value="">Unassigned</option>
+                {% for member in members %}
+                <option value="{{ member.id }}">{{ member.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Create Task</button>
+            <a href="{% url 'project_detail' project.pk %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
